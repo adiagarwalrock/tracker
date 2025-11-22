@@ -75,10 +75,10 @@ function mergeOverlappingSpans(spans: MergedSpan[]): MergedSpan[] {
   if (spans.length === 0) return []
 
   const merged: MergedSpan[] = []
-  let current = spans[0]
+  let current: MergedSpan = spans[0]!
 
   for (let i = 1; i < spans.length; i++) {
-    const next = spans[i]
+    const next = spans[i]!
 
     // Check if current and next overlap or are contiguous (within 1 day)
     const daysBetween = differenceInCalendarDays(

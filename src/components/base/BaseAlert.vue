@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toRefs } from 'vue'
 interface Props {
   type?: 'success' | 'warning' | 'error' | 'info'
   title?: string
@@ -13,6 +14,8 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'info',
   dismissible: false,
 })
+
+const { type, title, dismissible } = toRefs(props)
 
 const emit = defineEmits<Emits>()
 

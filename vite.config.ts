@@ -17,13 +17,9 @@ export default defineConfig({
   build: {
     // Production optimizations for minimal, sleek, fast-loading app
     target: 'esnext',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true, // Remove console logs in production
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info'], // Remove specific console calls
-      },
+    minify: 'esbuild',
+    esbuild: {
+      drop: ['console', 'debugger'],
     },
 
     // Chunk splitting for better caching

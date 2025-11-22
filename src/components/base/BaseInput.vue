@@ -18,6 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   required: false,
   disabled: false,
+  placeholder: '',
 })
 
 const emit = defineEmits<Emits>()

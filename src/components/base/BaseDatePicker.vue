@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   addMonths,
+  addYears,
   eachDayOfInterval,
   endOfMonth,
   endOfWeek,
@@ -42,12 +43,45 @@ const containerRef = ref<HTMLElement | null>(null)
 const displayMonth = ref<Date>(props.modelValue ? props.modelValue : new Date())
 
 const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+]
+
+const selectedMonth = ref(displayMonth.value.getMonth())
+const selectedYear = ref(displayMonth.value.getFullYear())
 
 watch(
   () => props.modelValue,
   (val) => {
     if (val) {
       displayMonth.value = val
+    }
+  }
+)
+
+watch(displayMonth, (val) => {
+  selectedMonth.value = val.getMonth()
+  selectedYear.value = val.getFullYear()
+})
+
+watch(
+  [selectedMonth, selectedYear],
+  ([month, year]) => {
+    if (!Number.isFinite(year)) return
+    const newDate = startOfMonth(new Date(year, month, 1))
+    if (Math.abs(newDate.getTime() - displayMonth.value.getTime()) > 1000) {
+      displayMonth.value = newDate
     }
   }
 )
@@ -107,6 +141,14 @@ function goToPreviousMonth() {
 
 function goToNextMonth() {
   displayMonth.value = addMonths(displayMonth.value, 1)
+}
+
+function goToPreviousYear() {
+  displayMonth.value = addYears(displayMonth.value, -1)
+}
+
+function goToNextYear() {
+  displayMonth.value = addYears(displayMonth.value, 1)
 }
 
 function isDayDisabled(day: Date): boolean {
@@ -186,26 +228,58 @@ onBeforeUnmount(() => {
         v-if="isOpen"
         class="absolute z-20 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg p-3"
       >
-        <div class="flex items-center justify-between mb-2">
-          <button
-            type="button"
-            class="text-gray-500 hover:text-gray-700 p-1"
-            @click="goToPreviousMonth"
-          >
-            <span class="sr-only">Previous month</span>
-            ‹
-          </button>
-          <p class="font-semibold text-gray-900">
-            {{ format(displayMonth, 'MMMM yyyy') }}
-          </p>
-          <button
-            type="button"
-            class="text-gray-500 hover:text-gray-700 p-1"
-            @click="goToNextMonth"
-          >
-            <span class="sr-only">Next month</span>
-            ›
-          </button>
+        <div class="grid grid-cols-[auto,1fr,auto] gap-1 items-center mb-2">
+          <div class="flex items-center space-x-0.5 text-xs">
+            <button
+              type="button"
+              class="text-gray-500 hover:text-gray-700 p-1 rounded"
+              @click="goToPreviousYear"
+            >
+              <span class="sr-only">Previous year</span>
+              «
+            </button>
+            <button
+              type="button"
+              class="text-gray-500 hover:text-gray-700 p-1 rounded"
+              @click="goToPreviousMonth"
+            >
+              <span class="sr-only">Previous month</span>
+              ‹
+            </button>
+          </div>
+          <div class="flex items-center space-x-1 justify-center">
+            <select
+              v-model.number="selectedMonth"
+              class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-24"
+            >
+              <option v-for="(month, index) in months" :key="month" :value="index">
+                {{ month }}
+              </option>
+            </select>
+          <input
+            v-model.number="selectedYear"
+            type="number"
+            class="w-16 border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+          />
+        </div>
+          <div class="flex items-center space-x-0.5 text-xs justify-end">
+            <button
+              type="button"
+              class="text-gray-500 hover:text-gray-700 p-1 rounded"
+              @click="goToNextMonth"
+            >
+              <span class="sr-only">Next month</span>
+              ›
+            </button>
+            <button
+              type="button"
+              class="text-gray-500 hover:text-gray-700 p-1 rounded"
+              @click="goToNextYear"
+            >
+              <span class="sr-only">Next year</span>
+              »
+            </button>
+          </div>
         </div>
 
         <div class="grid grid-cols-7 text-center text-xs font-medium text-gray-500 mb-2">

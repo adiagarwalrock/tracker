@@ -1,19 +1,90 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import BaseButton from './components/base/BaseButton.vue'
 import BaseModal from './components/base/BaseModal.vue'
 import InputForm from './components/InputForm.vue'
 import ResultSummary from './components/ResultSummary.vue'
 import Timeline from './components/Timeline.vue'
 import { useAppStore } from './stores/app'
+import { format } from 'date-fns'
 
 const store = useAppStore()
 const showHelpModal = ref(false)
+const copyStatus = ref<'idle' | 'copied' | 'error'>('idle')
+let copyTimeout: number | null = null
 
 onMounted(() => {
   // Load saved state from localStorage
   store.hydrateFromStorage()
 })
+
+function formatDate(date: Date | null | undefined): string {
+  return date ? format(date, 'MMM d, yyyy') : 'N/A'
+}
+
+const summaryText = computed(() => {
+  const sections: string[] = []
+
+  if (store.optPeriod) {
+    sections.push(
+      `OPT Period: ${formatDate(store.optPeriod.startDate)} - ${formatDate(store.optPeriod.endDate)}`
+    )
+  } else {
+    sections.push('OPT Period: Not set')
+  }
+
+  if (store.hasStemExtension && store.stemPeriod) {
+    sections.push(
+      `STEM Period: ${formatDate(store.stemPeriod.startDate)} - ${formatDate(store.stemPeriod.endDate)}`
+    )
+  }
+
+  if (store.employmentSpans.length > 0) {
+    const jobs = store.employmentSpans
+      .slice()
+      .sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
+      .map((span, index) => {
+        return `${index + 1}. ${span.employerName}: ${formatDate(span.startDate)} - ${span.endDate ? formatDate(span.endDate) : 'Ongoing'}`
+      })
+    sections.push(`Employment History:\n${jobs.join('\n')}`)
+  } else {
+    sections.push('Employment History: None added')
+  }
+
+  if (store.calculationResult) {
+    const result = store.calculationResult
+    sections.push(
+      `Totals:\n- Total Used: ${result.totalUsedDays} days\n- Total Allowed: ${result.totalAllowedDays} days\n- Status: ${result.status.toUpperCase()}`
+    )
+  } else {
+    sections.push('Totals: Not calculated yet (enter OPT dates to begin).')
+  }
+
+  return sections.join('\n\n')
+})
+
+async function copySummary() {
+  if (!store.optPeriod) return
+  if (copyTimeout) {
+    clearTimeout(copyTimeout)
+    copyTimeout = null
+  }
+  try {
+    if (navigator && navigator.clipboard) {
+      await navigator.clipboard.writeText(summaryText.value)
+      copyStatus.value = 'copied'
+    } else {
+      throw new Error('Clipboard API unavailable')
+    }
+  } catch (error) {
+    console.error('Failed to copy summary', error)
+    copyStatus.value = 'error'
+  } finally {
+    copyTimeout = window.setTimeout(() => {
+      copyStatus.value = 'idle'
+    }, 3000)
+  }
+}
 </script>
 
 <template>
@@ -101,10 +172,31 @@ onMounted(() => {
         <!-- Right Column: Results & Timeline -->
         <div class="space-y-6">
           <!-- Results Summary -->
-          <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">
-              Unemployment Summary
-            </h2>
+          <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xl font-semibold text-gray-900">
+                Unemployment Summary
+              </h2>
+              <div class="flex items-center space-x-2">
+                <BaseButton
+                  variant="secondary"
+                  size="sm"
+                  :disabled="!store.canCalculate || !store.optPeriod"
+                  @click="copySummary"
+                >
+                  Copy Summary
+                </BaseButton>
+                <span
+                  v-if="copyStatus !== 'idle'"
+                  :class="[
+                    'text-xs font-medium',
+                    copyStatus === 'copied' ? 'text-green-600' : 'text-red-600',
+                  ]"
+                >
+                  {{ copyStatus === 'copied' ? 'Copied!' : 'Copy failed' }}
+                </span>
+              </div>
+            </div>
 
             <ResultSummary />
           </div>
@@ -123,11 +215,11 @@ onMounted(() => {
       <!-- Footer -->
       <div class="mt-12 text-center text-sm text-gray-600">
         <p class="font-medium text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-md p-3 inline-block">
-          ⚠️ This tool is for educational purposes only. Always consult your
+          ⚠️ This tool is for reference purposes only. Always consult your
           international student office for official guidance.
         </p>
         <p class="mt-4 text-xs text-gray-500">
-          I do not store any dates or personal information—everything stays in your browser.
+          I do not store any dates or personal information — everything stays in your browser.
         </p>
       </div>
     </main>

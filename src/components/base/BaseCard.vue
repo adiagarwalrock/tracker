@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toRefs } from 'vue'
 interface Props {
   title?: string
   padding?: 'none' | 'sm' | 'md' | 'lg'
@@ -7,6 +8,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   padding: 'md',
 })
+
+const { title, padding } = toRefs(props)
 
 const paddingClasses = {
   none: '',
