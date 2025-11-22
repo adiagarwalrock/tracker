@@ -14,7 +14,7 @@ Goals:
 Usage tips:
 
 - Enter OPT/STEM dates, add employment entries, click **Copy Summary** to share with advisors.
-- Use the **Download Deadlines (ICS)** button to add the 90-day and 150-day reminders to Google Calendar, Apple Calendar, etc.
+- Use the **Download Deadlines** button to add the 90-day and 150-day reminders to Google Calendar, Apple Calendar, etc.
 
 ## Getting Started
 

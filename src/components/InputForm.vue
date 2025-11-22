@@ -240,7 +240,7 @@ function clearAllData() {
       <h3 class="text-lg font-medium text-gray-900 mb-3">Employment History</h3>
 
       <!-- Add/Edit Employment Form -->
-      <div class="bg-gray-50 rounded-md p-4 mb-4">
+      <div class="glass-card bg-white/70 border border-white/40 p-4 mb-4">
         <div class="space-y-3">
           <BaseInput
             v-model="employerName"
