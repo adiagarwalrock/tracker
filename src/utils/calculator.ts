@@ -16,8 +16,8 @@ import type {
 } from '../types'
 
 // Constants for unemployment limits
-const OPT_UNEMPLOYMENT_LIMIT = 90 // days
-const TOTAL_UNEMPLOYMENT_LIMIT_WITH_STEM = 150 // days (total across OPT + STEM)
+export const OPT_UNEMPLOYMENT_LIMIT = 90 // days
+export const TOTAL_UNEMPLOYMENT_LIMIT_WITH_STEM = 150 // days (total across OPT + STEM)
 
 type ReferenceDate = Date
 

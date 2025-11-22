@@ -9,6 +9,12 @@ Goals:
 - Provide accurate unemployment calculations for 90-day OPT and 150-day STEM limits.
 - Offer a clear timeline view with gap warnings and status summaries.
 - Empower others to contribute and extend the tool (multi-language support, exports, notifications).
+- Allow students to export unemployment deadlines as ICS calendar reminders.
+
+Usage tips:
+
+- Enter OPT/STEM dates, add employment entries, click **Copy Summary** to share with advisors.
+- Use the **Download Deadlines (ICS)** button to add the 90-day and 150-day reminders to Google Calendar, Apple Calendar, etc.
 
 ## Getting Started
 
@@ -30,10 +36,6 @@ npm run preview  # Preview the build locally
 ```
 
 ## Deployment
-
-### GitHub Pages
-
-- Configured with a workflow in `.github/workflows/deploy.yml`. Push to `main` and the site builds automatically.
 
 ### Vercel
 
@@ -59,4 +61,4 @@ Scope for future work also includes adding countdown trackers for other immigrat
 
 ## License
 
-MIT © [Adi Agarwal](https://github.com/adiagarwalrock)
+MIT

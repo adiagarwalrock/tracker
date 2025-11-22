@@ -7,11 +7,15 @@ import InputForm from './components/InputForm.vue'
 import ResultSummary from './components/ResultSummary.vue'
 import Timeline from './components/Timeline.vue'
 import { useAppStore } from './stores/app'
+import { createUnemploymentICS, downloadIcsFile } from './utils/ics'
 
 const store = useAppStore()
 const showHelpModal = ref(false)
+type ToastType = 'success' | 'error'
 const copyStatus = ref<'idle' | 'copied' | 'error'>('idle')
-let copyTimeout: number | null = null
+const exportStatus = ref<'idle' | 'success' | 'error'>('idle')
+const toasts = ref<{ id: number; message: string; type: ToastType }[]>([])
+let tempTimer: number | null = null
 
 onMounted(() => {
   // Load saved state from localStorage
@@ -63,25 +67,58 @@ const summaryText = computed(() => {
   return sections.join('\n\n')
 })
 
+function pushToast(message: string, type: ToastType = 'success') {
+  const id = Date.now()
+  toasts.value.push({ id, message, type })
+  window.setTimeout(() => {
+    toasts.value = toasts.value.filter((toast) => toast.id !== id)
+  }, 4000)
+}
+
 async function copySummary() {
   if (!store.optPeriod) return
-  if (copyTimeout) {
-    clearTimeout(copyTimeout)
-    copyTimeout = null
+  if (tempTimer) {
+    clearTimeout(tempTimer)
+    tempTimer = null
   }
   try {
     if (navigator && navigator.clipboard) {
       await navigator.clipboard.writeText(summaryText.value)
       copyStatus.value = 'copied'
+      pushToast('Summary copied to clipboard', 'success')
     } else {
       throw new Error('Clipboard API unavailable')
     }
   } catch (error) {
     console.error('Failed to copy summary', error)
     copyStatus.value = 'error'
+    pushToast('Failed to copy summary', 'error')
   } finally {
-    copyTimeout = window.setTimeout(() => {
+    tempTimer = window.setTimeout(() => {
       copyStatus.value = 'idle'
+    }, 3000)
+  }
+}
+
+async function exportDeadlines() {
+  if (!store.optPeriod) return
+  if (tempTimer) {
+    clearTimeout(tempTimer)
+    tempTimer = null
+  }
+  try {
+    const ics = createUnemploymentICS(store.optPeriod, store.stemPeriod)
+    if (!ics) throw new Error('Missing OPT period')
+    downloadIcsFile(ics, 'opt-stem-deadlines.ics')
+    exportStatus.value = 'success'
+    pushToast('ICS download created', 'success')
+  } catch (error) {
+    console.error('Failed to export ICS', error)
+    exportStatus.value = 'error'
+    pushToast('Failed to export ICS file', 'error')
+  } finally {
+    tempTimer = window.setTimeout(() => {
+      exportStatus.value = 'idle'
     }, 3000)
   }
 }
@@ -186,15 +223,14 @@ async function copySummary() {
                 >
                   Copy Summary
                 </BaseButton>
-                <span
-                  v-if="copyStatus !== 'idle'"
-                  :class="[
-                    'text-xs font-medium',
-                    copyStatus === 'copied' ? 'text-green-600' : 'text-red-600',
-                  ]"
+                <BaseButton
+                  variant="secondary"
+                  size="sm"
+                  :disabled="!store.canCalculate || !store.optPeriod"
+                  @click="exportDeadlines"
                 >
-                  {{ copyStatus === 'copied' ? 'Copied!' : 'Copy failed' }}
-                </span>
+                  Download Deadlines
+                </BaseButton>
               </div>
             </div>
 
@@ -223,6 +259,20 @@ async function copySummary() {
         </p>
       </div>
     </main>
+
+    <!-- Toast Notifications -->
+    <div class="fixed bottom-4 left-4 space-y-2 z-50">
+      <div
+        v-for="toast in toasts"
+        :key="toast.id"
+        :class="[
+          'px-4 py-3 rounded shadow text-sm text-white',
+          toast.type === 'success' ? 'bg-green-600' : 'bg-red-600',
+        ]"
+      >
+        {{ toast.message }}
+      </div>
+    </div>
 
     <!-- Help Modal -->
     <BaseModal
