@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { format } from 'date-fns'
 import { computed, onMounted, ref } from 'vue'
 import BaseButton from './components/base/BaseButton.vue'
 import BaseModal from './components/base/BaseModal.vue'
@@ -6,7 +7,6 @@ import InputForm from './components/InputForm.vue'
 import ResultSummary from './components/ResultSummary.vue'
 import Timeline from './components/Timeline.vue'
 import { useAppStore } from './stores/app'
-import { format } from 'date-fns'
 
 const store = useAppStore()
 const showHelpModal = ref(false)
@@ -95,7 +95,7 @@ async function copySummary() {
         <div class="flex items-center justify-between">
           <div>
             <h1 class="text-3xl font-bold text-gray-900">
-              Unemployment Tracker
+              Track US
             </h1>
             <p class="mt-1 text-sm text-gray-600">
               Track your unemployment days for F-1 OPT and STEM OPT (for now)

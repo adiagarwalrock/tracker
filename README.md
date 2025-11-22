@@ -1,90 +1,62 @@
 # OPT/STEM-OPT Unemployment Tracker
 
-A fast, minimal web app for F-1 students to track unemployment days during post-completion OPT and STEM OPT periods.
+![Track US](https://deploy-badge.vercel.app/?url=https://trackus.vercel.app/&name=track-us)
 
-## Features
+This open-source project helps F‑1 students track unemployment days during post-completion OPT and STEM OPT. The app runs entirely in the browser (Vue 3 + Pinia + Tailwind + Vite) and keeps all data in localStorage so nothing leaves the user’s device.
 
-- **Accurate Day Calculation**: Track unemployment days for both OPT (90-day limit) and STEM OPT (150-day total limit)
-- **Visual Timeline**: See your employment/unemployment periods at a glance
-- **Smart Validation**: Automatic overlap detection and date validation
-- **Status Warnings**: Get alerts when approaching or exceeding unemployment limits
-- **Local Storage**: Your data stays on your device - no server, no tracking
-- **Mobile-Friendly**: Responsive design works on all devices
-- **Export Ready**: Generate printable summaries (coming soon)
+Goals:
 
-## Usage
+- Provide accurate unemployment calculations for 90-day OPT and 150-day STEM limits.
+- Offer a clear timeline view with gap warnings and status summaries.
+- Empower others to contribute and extend the tool (multi-language support, exports, notifications).
 
-1. Enter your EAD start and end dates for OPT
-2. Indicate if you have STEM OPT extension
-3. Add your employment periods (employer name, start/end dates)
-4. View your unemployment days used and remaining
-5. Monitor visual timeline and status warnings
-
-## Quick Start
+## Getting Started
 
 ```bash
-# Install dependencies
+git clone https://github.com/adiagarwalrock/tracker.git
+cd tracker
 npm install
-
-# Run development server
 npm run dev
-
-# Build for production
-npm run build
-
-# Run tests
-npm run test
 ```
 
-## Tech Stack
+Visit `http://localhost:5173` to start developing.
 
-- **Vue 3** + TypeScript + Composition API
-- **Pinia** for state management
-- **Tailwind CSS** for styling
-- **date-fns** for date calculations
-- **Vite** for blazing fast builds
+## Testing & Building
+
+```bash
+npm run test     # Vitest + happy-dom
+npm run build    # vue-tsc + Vite production build
+npm run preview  # Preview the build locally
+```
 
 ## Deployment
 
-This app automatically deploys to GitHub Pages via GitHub Actions.
+### GitHub Pages
 
-### Setup GitHub Pages
+- Configured with a workflow in `.github/workflows/deploy.yml`. Push to `main` and the site builds automatically.
 
-1. Go to your repository **Settings** → **Pages**
-2. Under **Source**, select **GitHub Actions**
-3. Push to the `main` branch to trigger deployment
+### Vercel
 
-The app will be available at: `https://yourusername.github.io/opt-calculator/`
+1. Install the Vercel CLI and run `vercel` (or `vercel --prod` for production).
+2. The included `vercel.json` sets the build command (`npm run build`) and rewrites everything to `index.html` for SPA routing.
+3. Web analytics is wired via `@vercel/analytics` (see `src/main.ts`). Toggle Analytics in the Vercel dashboard to start tracking.
 
-### Deploy to Vercel
+## Contributing
 
-1. Install the [Vercel CLI](https://vercel.com/docs/cli) and run `vercel login`
-2. From the project root run `vercel` and follow the prompts (defaults work)
-3. For future deploys run `vercel --prod` or connect the repo in the Vercel dashboard
+1. Fork and create a branch (e.g., `feature/timeline-accessibility`).
+2. Run `npm run dev`, make your changes, and add tests where needed.
+3. Run `npm run test && npm run build`.
+4. Submit a PR with a short summary and screenshots of UI changes.
 
-This repo already contains a `vercel.json` so routing and build commands are configured out of the box.
+Roadmap ideas include PDF export, multi-language support, offline/PWA mode, and additional notifications. Issues and feature requests are welcome.
 
-#### Enable Analytics & Monitoring
+Scope for future work also includes adding countdown trackers for other immigration or visa-related timelines so the app can serve a broader set of students.
 
-Vercel provides native analytics and error tracking once the project is deployed:
+## Notes & Resources
 
-- In the Vercel dashboard open **Project → Analytics** and enable **Web Analytics** (page views) and **Speed Insights**. The `<script src="/_vercel/insights/script.js">` tag in `index.html` is already present, so traffic data starts flowing as soon as you toggle the feature on.
-- For error logs, open **Project → Observability → Error Monitoring** and enable it. Vercel will automatically capture uncaught exceptions and failed function invocations. You can optionally configure alert rules (Slack/email) from the same screen.
-- Historical metrics can be exported as CSV directly from the Analytics UI if you want to archive usage reports.
-
-### Manual Deployment
-
-```bash
-npm run build
-# Upload the dist/ folder to your hosting provider
-```
-
-## Important Notes
-
-⚠️ **Educational Use Only**: This tool is for informational purposes. Always consult your international student office for official guidance.
-
-📚 **Official Resources**: [USCIS OPT Information](https://www.uscis.gov/working-in-the-united-states/students-and-exchange-visitors/optional-practical-training-opt-for-f-1-students)
+- Educational use only—students should always confirm status with their DSO or international student office.
+- Official reference: [USCIS OPT Guidance](https://www.uscis.gov/working-in-the-united-states/students-and-exchange-visitors/optional-practical-training-opt-for-f-1-students).
 
 ## License
 
-MIT
+MIT © [Adi Agarwal](https://github.com/adiagarwalrock)
