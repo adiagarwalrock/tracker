@@ -53,15 +53,6 @@ export default defineConfig({
     open: true,
   },
 
-  test: {
-    environment: 'happy-dom',
-    include: [
-      'src/**/*.spec.{js,ts,jsx,tsx}',
-      'src/**/*.test.{js,ts,jsx,tsx}',
-    ],
-    pool: 'threads',
-  },
-
   esbuild: {
     drop: ['console', 'debugger'],
   },

@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
 })
 
-const placeholderText = computed(() => props.placeholder ?? '')
+const placeholderText = computed<string>(() => props.placeholder ?? '')
 
 const emit = defineEmits<Emits>()
 
@@ -42,7 +42,8 @@ function formatValue(): string {
   if (!props.modelValue) return ''
 
   if (props.type === 'date' && props.modelValue instanceof Date) {
-    return props.modelValue.toISOString().split('T')[0]
+    const iso = props.modelValue.toISOString().split('T')[0]
+    return iso ?? ''
   }
 
   return String(props.modelValue)
