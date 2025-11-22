@@ -18,9 +18,6 @@ export default defineConfig({
     // Production optimizations for minimal, sleek, fast-loading app
     target: 'esnext',
     minify: 'esbuild',
-    esbuild: {
-      drop: ['console', 'debugger'],
-    },
 
     // Chunk splitting for better caching
     rollupOptions: {
@@ -63,5 +60,9 @@ export default defineConfig({
       'src/**/*.test.{js,ts,jsx,tsx}',
     ],
     pool: 'threads',
+  },
+
+  esbuild: {
+    drop: ['console', 'debugger'],
   },
 })

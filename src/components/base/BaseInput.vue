@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 interface Props {
   modelValue: string | number | Date | null
   label?: string
@@ -18,8 +19,9 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   required: false,
   disabled: false,
-  placeholder: '',
 })
+
+const placeholderText = computed(() => props.placeholder ?? '')
 
 const emit = defineEmits<Emits>()
 
@@ -60,7 +62,7 @@ function formatValue(): string {
     <input
       :type="type"
       :value="formatValue()"
-      :placeholder="placeholder"
+      :placeholder="placeholderText"
       :disabled="disabled"
       :required="required"
       :class="[
