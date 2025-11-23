@@ -137,6 +137,7 @@ async function exportDeadlines() {
         <div class="flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <span class="fun-pill bg-white/70 text-sky-700 shadow">Made for students</span>
+            <span class="fun-pill bg-white/70 text-amber-600 shadow mt-2 inline-block">In Beta</span>
             <h1 class="text-4xl md:text-5xl font-black text-slate-900 mt-3 drop-shadow-sm">
               Track US
             </h1>
@@ -146,9 +147,14 @@ async function exportDeadlines() {
             <p class="mt-1 text-sm text-gray-600 max-w-xl">
               I am open to contributions! Check out the GitHub repo.
             </p>
+            <p class="mt-1 text-s text-gray-500 max-w-xl">
+              Want a feature? <a href="https://github.com/adiagarwalrock/track-us/issues" target="_blank"
+                rel="noopener noreferrer" class="text-primary-600 hover:text-primary-700 font-semibold">Open a GitHub
+                issue</a> so I can track it.
+            </p>
           </div>
           <div class="flex items-center space-x-3">
-            <a href="https://github.com/adiagarwalrock/tracker" target="_blank" rel="noopener noreferrer"
+            <a href="https://github.com/adiagarwalrock/track-us" target="_blank" rel="noopener noreferrer"
               class="inline-flex items-center text-sm font-semibold text-primary-600 hover:text-primary-700">
               <svg class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -197,12 +203,8 @@ async function exportDeadlines() {
               </h2>
               <div class="flex items-center space-x-2">
                 <BaseButton variant="secondary" size="sm" :disabled="!store.canCalculate || !store.optPeriod"
-                  @click="copySummary">
-                  Copy Summary
-                </BaseButton>
-                <BaseButton variant="secondary" size="sm" :disabled="!store.canCalculate || !store.optPeriod"
                   @click="exportDeadlines">
-                  Download Deadlines
+                  📆 Add to Calendar
                 </BaseButton>
               </div>
             </div>
@@ -212,9 +214,15 @@ async function exportDeadlines() {
 
           <!-- Timeline -->
           <div class="glass-card p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">
-              Employment Timeline
-            </h2>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-semibold text-gray-900">
+                Employment Timeline
+              </h2>
+              <BaseButton variant="secondary" size="sm" :disabled="!store.canCalculate || !store.optPeriod"
+                @click="copySummary">
+                Copy Summary
+              </BaseButton>
+            </div>
 
             <Timeline />
           </div>
